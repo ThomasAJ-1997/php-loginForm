@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Registration Form</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+<?php 
+require 'functions/connection.php';
+
+dbConnection();
+
+
+?>
+
+<?php require 'includes/header.php'; ?>
 
 <div class="login-box">
     <form action="" method="post">
@@ -43,5 +43,4 @@
     </div>
 </form>
     
-</body>
-</html>
+<?php require 'includes/footer.php'; ?>

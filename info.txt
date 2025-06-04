@@ -1,0 +1,12 @@
+Test Account Credentials 
+
+Firstname: Testing 
+Lastname: Account 
+Email: testing@example.com
+Password: 10131173Java$
+
+Account 02
+Firstname: Admin
+lastname: Testing
+email: admintest@example.com
+password: Testingaccount123$

@@ -13,6 +13,10 @@ body {
   min-height: 100vh;
 }
 
+.center {
+  text-align: center;
+}
+
 .login-box {
   display: flex;
   justify-content: center;
@@ -125,4 +129,19 @@ section a {
 .sign-up-link a {
   color: #000;
   font-weight: 600;
+}
+
+/* PHP CSS */
+.error-text {
+  font-size: 12px;
+  color: red;
+  font-weight: 600;
+  margin: 10px 10px;
+}
+
+.message-text {
+  font-size: 12px;
+  color: green;
+  font-weight: 600;
+  margin: 10px 10px;
 }
