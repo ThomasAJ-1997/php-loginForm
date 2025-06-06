@@ -1,7 +1,61 @@
 <?php 
-require 'functions/connection.php';
+session_start();
 
-dbConnection();
+require 'functions/connection.php';
+require 'functions/validator.php';
+
+if (isset($_SESSION['account_loggedin'])) {
+    header('Location: dashboard.php');
+    exit;
+}
+
+$is_invalid = false;
+
+$errors = [];
+$message = [];
+
+$id = '';
+$firstname = '';
+$email = '';
+$password = '';
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+   $conn = dbConnection();
+    
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    $user = sprintf("SELECT * FROM customer WHERE email = '%s'", mysqli_real_escape_string($conn, $email));
+
+    $result = mysqli_query($conn, $user);
+
+    $user = mysqli_fetch_assoc($result);
+
+    if (empty($email) || empty($password)) {
+        $errors[] = 'Please fill both username and password fields';
+    }
+    
+    if ($user) {
+        if(password_verify($password, $user['password'])) {
+            
+            session_regenerate_id();
+            $_SESSION['account_loggedin'] = TRUE;
+            $_SESSION['account_name'] = $user['firstname'];
+            $_SESSION['account_id'] = $user['id'];
+            
+            header('location: dashboard.php');
+            exit;
+        } else {
+            $errors[] = 'Email and/or password is invalid, please try again';
+    } 
+} else {
+    $errors[] = 'Email and/or password is invalid, please try again';
+}
+
+} $is_invalid = true;
 
 
 ?>
@@ -31,6 +85,17 @@ dbConnection();
                 <a href="forgotPassword.php">Forgot Password</a>
             </section>
         </div>
+
+          <?php if(!empty($errors)): ?>
+            <ul>
+        <?php foreach($errors as $error): ?>
+            <div class="error">
+                <li class="error-text"><?= $error ?></li>
+            </div>
+            <?php endforeach; ?>
+        </ul>
+        <?php endif; ?>
+
 
         <div class="input-submit">
             <button class="submit-btn" id="submit"></button>

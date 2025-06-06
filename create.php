@@ -4,6 +4,11 @@ session_start();
 require 'functions/connection.php';
 require 'functions/validator.php';
 
+if (isset($_SESSION['account_loggedin'])) {
+    header('Location: dashboard.php');
+    exit;
+}
+
 $errors = [];
 $messages = [];
 
@@ -20,6 +25,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Validate Errors
     $errors = validateAccount($conn, $firstname, $lastname, $email, $password);
@@ -39,14 +45,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             //Bind params
-            mysqli_stmt_bind_param($stmt, 'ssss', $firstname, $lastname, $email, $password);
+            mysqli_stmt_bind_param($stmt, 'ssss', $firstname, $lastname, $email, $hashed_password);
             
             // Execute SQL
             if (mysqli_stmt_execute($stmt)) {
                 $message = 'Account Successfully created. Please sign in';
             } else {
                 echo mysqli_stmt_error($stmt);
-            }      
+            }    
+            
+            
     }
 }
 
