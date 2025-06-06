@@ -18,7 +18,7 @@ $id = '';
 $firstname = '';
 $email = '';
 $password = '';
-
+$remember = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
@@ -37,20 +37,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($email) || empty($password)) {
         $errors[] = 'Please fill both username and password fields';
     }
+
+    if (isset($_POST['remember'])) {
+        $remember = $_POST['remember'];
+        setcookie("remember_email", $email, time() + 36000*24*365);
+        setcookie("remember", $remember, time() + 36000*24*365);
+
+    } else {
+       setcookie("remember_email", $email, time() - 360000 );setcookie("remember", $remember, time() - 3600);
+    }
     
     if ($user) {
-        if(password_verify($password, $user['password'])) {
-            
-            session_regenerate_id();
-            $_SESSION['account_loggedin'] = TRUE;
-            $_SESSION['account_name'] = $user['firstname'];
-            $_SESSION['account_id'] = $user['id'];
-            
-            header('location: dashboard.php');
-            exit;
-        } else {
-            $errors[] = 'Email and/or password is invalid, please try again';
-    } 
+        $errors = validateVerifiedPassword($password, $user);
+
 } else {
     $errors[] = 'Email and/or password is invalid, please try again';
 }
@@ -69,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="input-box">
-            <input type="text" name="email" class="input-field" placeholder="Email" autocomplete="off">
+            <input type="text" name="email" class="input-field" placeholder="Email" autocomplete="off" value="<?php if(!empty($email)) { echo $email; } elseif (isset($_COOKIE['remember_email'])) { echo $_COOKIE['remember_email']; } ?>">
         </div>
 
         <div class="input-box">
@@ -78,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <div class="forgot">
             <section>
-                <input type="checkbox" id="check">
+                <input name="remember" type="checkbox" id="check">
                 <label for="check">Remember me</label>
             </section>
             <section>

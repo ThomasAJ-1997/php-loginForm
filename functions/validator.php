@@ -60,3 +60,25 @@ function validateAccount($conn, $firstname, $lastname, $email, $password) {
     return $errors;
 }
 
+function validateVerifiedPassword($password, $user) {
+    $errors = [];
+
+        if(password_verify($password, $user['password'])) {
+            
+            session_regenerate_id();
+            $_SESSION['account_loggedin'] = TRUE;
+            $_SESSION['account_name'] = $user['firstname'];
+            $_SESSION['account_id'] = $user['id'];
+            
+            header('location: dashboard.php');
+            exit;
+        } else {
+            $errors[] = 'Email and/or password is invalid, please try again';
+    } 
+
+    return $errors;
+}
+
+function validateRememberCheckbox() {
+    
+}

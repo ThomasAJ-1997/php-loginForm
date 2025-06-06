@@ -1,0 +1,3 @@
+<FilesMatch "^(?!(dashboard|create|login|logout|forgot)\.php$).+$">
+Require all denied 
+</FilesMatch>
