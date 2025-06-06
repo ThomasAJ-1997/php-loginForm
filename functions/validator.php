@@ -79,6 +79,3 @@ function validateVerifiedPassword($password, $user) {
     return $errors;
 }
 
-function validateRememberCheckbox() {
-    
-}

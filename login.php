@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="input-box">
-            <input type="text" name="password" class="input-field" placeholder="Password" autocomplete="off">
+            <input type="password" name="password" class="input-field" placeholder="Password" autocomplete="off">
         </div>
 
         <div class="forgot">
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="check">Remember me</label>
             </section>
             <section>
-                <a href="forgotPassword.php">Forgot Password</a>
+                <a href="forgot.php">Forgot Password</a>
             </section>
         </div>
 
