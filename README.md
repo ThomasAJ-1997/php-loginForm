@@ -16,3 +16,5 @@ PHP Registration and login system
 5. Commit Five: Reset Password with email verification
    Used PHPMailer via composer and gmail's SMTP server for user's
    to change their password's via tokens with expiry times, and encrypted password entered into database.
+6. Commit Six: Clean up code: Use OOP and classes
+   Changed code from mysqli procedural code to PDO object oriented programming

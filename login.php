@@ -1,8 +1,10 @@
 <?php 
 session_start();
 
-require 'functions/connection.php';
-require 'functions/validator.php';
+require 'classes/Connect.php';
+require 'classes/Account.php';
+require 'classes/Cookies.php';
+
 
 if (isset($_SESSION['account_loggedin'])) {
     header('Location: dashboard.php');
@@ -16,39 +18,33 @@ $message = [];
 
 $id = '';
 $firstname = '';
+$lastname = '';
 $email = '';
 $password = '';
 $remember = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
-   $conn = dbConnection();
+   $db = new Connect();
+   $conn = $db->dbConnection();
     
     $email = $_POST['email'];
     $password = $_POST['password'];
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    $user = sprintf("SELECT * FROM customer WHERE email = '%s'", mysqli_real_escape_string($conn, $email));
+    $account = new Account($firstname, $lastname, $email, $password);
 
-    $result = mysqli_query($conn, $user);
+    $user = $account->getAccountEmail($conn, $email);
 
-    $user = mysqli_fetch_assoc($result);
+    $cookies = new Cookies($remember, $email);
+    $remember = $cookies->checkCookies($remember, $email);
 
     if (empty($email) || empty($password)) {
         $errors[] = 'Please fill both username and password fields';
     }
 
-    if (isset($_POST['remember'])) {
-        $remember = $_POST['remember'];
-        setcookie("remember_email", $email, time() + 36000*24*365);
-        setcookie("remember", $remember, time() + 36000*24*365);
-
-    } else {
-       setcookie("remember_email", $email, time() - 360000 );setcookie("remember", $remember, time() - 3600);
-    }
-    
     if ($user) {
-        $errors = validateVerifiedPassword($password, $user);
+        $errors = $account->validateVerifiedPassword($password, $user);
 
 } else {
     $errors[] = 'Email and/or password is invalid, please try again';

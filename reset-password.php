@@ -1,24 +1,17 @@
 <?php
-require 'functions/connection.php';
+require 'classes/Connect.php';
+require 'classes/Token.php';
 
 $token = $_GET['token'];
 
 $token_hash = hash("sha256", $token);
 
-$conn = dbConnection();
+$db = new Connect();
+$conn = $db->dbConnection();
 
-$sql = "SELECT * FROM customer 
-        WHERE reset_token_hash = ?";
+$new_token = new Token();
 
-$stmt = $conn->prepare($sql);
-
-$stmt->bind_param("s", $token_hash);
-
-$stmt->execute();
-
-$result = $stmt->get_result();
-
-$user = $result->fetch_assoc();
+$user = $new_token->tokenHash($conn, $token_hash);
 
 if ($user === null) {
     die('Token not found');

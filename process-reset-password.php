@@ -1,27 +1,19 @@
 <?php 
 
-require 'functions/connection.php';
-
+require 'classes/Connect.php';
+require 'classes/Account.php';
+require 'classes/Token.php';
 $errors = [];
 
 $token = $_POST['token'];
 
 $token_hash = hash("sha256", $token);
 
-$conn = dbConnection();
+$db = new Connect();
+$conn = $db->dbConnection();
 
-$sql = "SELECT * FROM customer 
-        WHERE reset_token_hash = ?";
-
-$stmt = $conn->prepare($sql);
-
-$stmt->bind_param("s", $token_hash);
-
-$stmt->execute();
-
-$result = $stmt->get_result();
-
-$user = $result->fetch_assoc();
+$new_token = new Token();
+$user = $new_token->tokenHash($conn, $token_hash);
 
 if ($user === null) {
     die('Token not found');
@@ -31,7 +23,7 @@ if ($user === null) {
     die("Token has expired");
  }   
  $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    
+
     if (!preg_match("/^(?=.*\d)(?=.*[A-Za-z])(?=.*[A-Z])(?=.*[a-z])(?=.*[ !#$%&'\(\) * +,-.\/[\\] ^ _`{|}~\"])[0-9A-Za-z !#$%&'\(\) * +,-.\/[\\] ^ _`{|}~\"]{8,50}$/", $_POST['password'])) {
         die('Make sure password contains: 1 digit, 1 capital, 1 lower and 1 special character');
         // Checks for:
@@ -55,24 +47,7 @@ if ($user === null) {
         die('Passwords much match');
     }
 
-  
-
-     //////////////////////////////////////////////////////////////////////////////
-     // UPDATE DATABASE
-
-     $sql = "UPDATE customer 
-             SET password = ?, 
-                 reset_token_hash = NULL, 
-                 reset_token_expires_at = NULL
-            WHERE id = ?";
-
-    $stmt = $conn->prepare($sql);
-
-    $stmt->bind_param("ss", $hashed_password, $user['id']);
-
-    $stmt->execute();
-
-    echo "Password updated. You can now sign in.";
+    $token_reset = $new_token->resetToken($conn, $hashed_password, $user);
 ?>
 
 <?php require 'includes/header.php'; ?>

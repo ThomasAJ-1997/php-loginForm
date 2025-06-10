@@ -5,7 +5,7 @@
 <?php require 'includes/header.php'; ?>
 
 <div class="login-box">
-    <form action="functions/send-password-reset.php" method="post">
+    <form action="includes/send-password-reset.php" method="post">
                 <div class="login-header">
             <header>Forgot Password</header>
         </div>
